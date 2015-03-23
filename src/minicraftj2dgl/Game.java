@@ -38,8 +38,8 @@ public class Game extends Core {
     private int pendingLevelChange;
     private boolean playAble = false;
 
-    private final int VIEW_WIDTH = 640 / 3;
-    private final int VIEW_HEIGTH = 360 / 3;
+    private final int VIEW_WIDTH = 640 / 2;
+    private final int VIEW_HEIGTH = 360 / 2;
 
     private final BufferedImage image = new BufferedImage(VIEW_WIDTH, VIEW_HEIGTH, BufferedImage.TYPE_INT_RGB);
     private final int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -57,7 +57,7 @@ public class Game extends Core {
     public boolean hasWon = false;
 
     public static void main(String[] args) {
-        new Game(640, 360).startLoop();
+        new Game(640, 360 + 2).startLoop();
     }
 
     public Game(int width, int height) {
