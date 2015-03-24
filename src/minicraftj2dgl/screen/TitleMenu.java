@@ -5,6 +5,7 @@ import minicraftj2dgl.Game;
 import minicraftj2dgl.InputHandler;
 import minicraftj2dgl.gfx.Color;
 import minicraftj2dgl.gfx.Screen;
+import minicraftj2dgl.io.GameState;
 import minicraftj2dgl.sound.Sound;
 
 public class TitleMenu extends ListMenu {
@@ -20,13 +21,16 @@ public class TitleMenu extends ListMenu {
     public void handleOption(int optionIndex) {
         if (optionIndex == 0) {
             // Continue
-            Sound.test.play();
-            game.saveManager.loadSavedGame("quicksave.sav");
+            if (!game.loaded) {
+                // If no game has been loaded, load quicksave, otherwise close menu.
+                Sound.test.play();
+                game.saveManager.loadSavedGame("quicksave.sav");
+            }
             game.removeMenu();
         } else if (optionIndex == 1) {
             // New Game
             Sound.test.play();
-            game.resetGame();
+            game.setGameState(GameState.getResetGameState(game, input));
             game.removeMenu();
         } else if (optionIndex == 2) {
             // Load Game
@@ -36,6 +40,7 @@ public class TitleMenu extends ListMenu {
             // Save Game
             String saveName = JOptionPane.showInputDialog("Enter save game name:");
             game.saveManager.saveGame(saveName);
+            game.menu = new TitleMenu(game, input);
         } else if (optionIndex == 4) {
             // Instructions
             game.menu = new InstructionsMenu(this, game, input);
@@ -44,7 +49,7 @@ public class TitleMenu extends ListMenu {
             game.menu = new AboutMenu(this, game, input);
         } else if (optionIndex == 6) {
             // Quit
-            System.exit(0);
+            game.exit();
         }
     }
 
