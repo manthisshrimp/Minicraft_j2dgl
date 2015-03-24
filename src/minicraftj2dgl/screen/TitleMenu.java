@@ -21,12 +21,21 @@ public class TitleMenu extends ListMenu {
     public void handleOption(int optionIndex) {
         if (optionIndex == 0) {
             // Continue
-            if (!game.loaded) {
-                // If no game has been loaded, load quicksave, otherwise close menu.
-                Sound.test.play();
-                game.saveManager.loadSavedGame("quicksave.sav");
+            if (game.loaded) {
+                game.removeMenu();
+            } else {
+                // If no game has been loaded, load last save.
+                String lastSaveName = game.config.getEntry("lastSave", String.class);
+                GameState gameState = game.saveManager.loadSavedGame(lastSaveName);
+                if (gameState != null) {
+                    game.setGameState(gameState);
+                    game.removeMenu();
+                    Sound.test.play();
+                } else {
+                    // TODO: Handle "Continue" option when no quicksave exists.
+                    JOptionPane.showMessageDialog(null, "Error loading \"" + lastSaveName + "\"");
+                }
             }
-            game.removeMenu();
         } else if (optionIndex == 1) {
             // New Game
             Sound.test.play();
@@ -35,11 +44,16 @@ public class TitleMenu extends ListMenu {
         } else if (optionIndex == 2) {
             // Load Game
             String[] names = game.saveManager.getSaveGameNames();
-            game.menu = new LoadMenu(names, game, input);
+            if (names.length > 0) {
+                game.menu = new LoadMenu(names, game, input);
+            }
         } else if (optionIndex == 3) {
             // Save Game
             String saveName = JOptionPane.showInputDialog("Enter save game name:");
-            game.saveManager.saveGame(saveName);
+            boolean successful = game.saveManager.saveGame(saveName);
+            if (!successful) {
+                JOptionPane.showMessageDialog(null, "Error saving \"" + saveName + ".sav\"");
+            }
             game.menu = new TitleMenu(game, input);
         } else if (optionIndex == 4) {
             // Instructions
@@ -77,8 +91,13 @@ public class TitleMenu extends ListMenu {
 
         @Override
         public void handleOption(int optionIndex) {
-            game.saveManager.loadSavedGame(options[optionIndex]);
-            game.removeMenu();
+            GameState gameState = game.saveManager.loadSavedGame(options[optionIndex]);
+            if (gameState == null) {
+                JOptionPane.showMessageDialog(null, "Error loading \"" + options[optionIndex] + "\"");
+            } else {
+                game.setGameState(gameState);
+                game.removeMenu();
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import minicraftj2dgl.entity.furnature.Workbench;
 import minicraftj2dgl.entity.particle.TextParticle;
 import minicraftj2dgl.gfx.Color;
 import minicraftj2dgl.gfx.Screen;
+import minicraftj2dgl.io.GameState;
 import minicraftj2dgl.item.FurnitureItem;
 import minicraftj2dgl.item.Item;
 import minicraftj2dgl.item.PowerGloveItem;
@@ -136,7 +137,12 @@ public class Player extends Mob {
             game.saveManager.saveGame("quicksave");
         }
         if (input.quickLoad.clicked) {
-            game.saveManager.loadSavedGame("quicksave.sav");
+            GameState gameState = game.saveManager.loadSavedGame("quicksave.sav");
+            if (gameState != null) {
+                game.setGameState(gameState);
+                game.removeMenu();
+                Sound.test.play();
+            }
         }
         if (input.mainMenu.clicked) {
             game.menu = new TitleMenu(game, input);

@@ -15,6 +15,7 @@ import minicraftj2dgl.gfx.Color;
 import minicraftj2dgl.gfx.Font;
 import minicraftj2dgl.gfx.Screen;
 import minicraftj2dgl.gfx.SpriteSheet;
+import minicraftj2dgl.io.GameConfig;
 import minicraftj2dgl.io.GameState;
 import minicraftj2dgl.io.SaveManager;
 import minicraftj2dgl.level.Level;
@@ -46,6 +47,7 @@ public class Game extends Core {
     // I/O
     public final InputHandler input = new InputHandler();
     public final SaveManager saveManager = new SaveManager(this);
+    public final GameConfig config = new GameConfig();
 
     // Variables & Flags
     private int tickCount = 0;

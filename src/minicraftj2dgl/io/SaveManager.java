@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import minicraftj2dgl.Game;
-import minicraftj2dgl.screen.LevelTransitionMenu;
 
 public class SaveManager {
 
@@ -32,28 +31,29 @@ public class SaveManager {
         return returnValues.toArray(new String[returnValues.size()]);
     }
 
-    public void loadSavedGame(String saveFileName) {
-        game.menu = new LevelTransitionMenu(0, game, null);
+    public GameState loadSavedGame(String saveFileName) {
         try (ObjectInputStream objectStream = new ObjectInputStream(new FileInputStream("saves/" + saveFileName))) {
             GameState gameState = (GameState) objectStream.readObject();
-            game.setGameState(gameState);
+            return gameState;
         } catch (IOException | ClassNotFoundException ex) {
-            // TODO: Handle exceptions
+            return null;
         }
     }
 
-    public void saveGame(String saveFileName) {
+    public boolean saveGame(String saveFileName) {
         GameState gameState = game.getGameState();
-        new Thread(() -> {
-            try {
-                try (ObjectOutputStream objectStream = new ObjectOutputStream(
-                        new FileOutputStream("saves/" + saveFileName + ".sav"))) {
-                    objectStream.writeObject(gameState);
-                    objectStream.flush();
-                }
-            } catch (IOException ex) {
-                // TODO: Handle exceptions
+//        new Thread(() -> {
+        try {
+            try (ObjectOutputStream objectStream = new ObjectOutputStream(
+                    new FileOutputStream("saves/" + saveFileName + ".sav"))) {
+                objectStream.writeObject(gameState);
+                objectStream.flush();
+                game.config.putConfig("lastSave", saveFileName + ".sav");
             }
-        }).start();
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+//        }).start();
     }
 }
