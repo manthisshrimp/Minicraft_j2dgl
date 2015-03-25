@@ -38,8 +38,8 @@ public class Game extends Core {
     private Level level = levels[currentLevel];
 
     // Rendering
-    private final int VIEW_WIDTH = 640 / 2;
-    private final int VIEW_HEIGTH = 360 / 2;
+    public final int VIEW_WIDTH = 640 / 2;
+    public final int VIEW_HEIGTH = 360 / 2;
     private Screen screen;
     private Screen lightScreen;
     private final BufferedImage image = new BufferedImage(VIEW_WIDTH, VIEW_HEIGTH, BufferedImage.TYPE_INT_RGB);

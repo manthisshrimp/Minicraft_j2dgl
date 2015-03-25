@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import minicraftj2dgl.Game;
+import minicraftj2dgl.screen.LoadingMenu;
 
 public class SaveManager {
 
@@ -32,11 +33,14 @@ public class SaveManager {
     }
 
     public GameState loadSavedGame(String saveFileName) {
+        game.menu = new LoadingMenu(game, null);
         try (ObjectInputStream objectStream = new ObjectInputStream(new FileInputStream("saves/" + saveFileName))) {
             GameState gameState = (GameState) objectStream.readObject();
             return gameState;
         } catch (IOException | ClassNotFoundException ex) {
             return null;
+        } finally {
+            game.removeMenu();
         }
     }
 

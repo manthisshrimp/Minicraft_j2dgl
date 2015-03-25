@@ -27,8 +27,8 @@ public class LevelTransitionMenu extends Menu {
 
     @Override
     public void render(Screen screen) {
-        for (int x = 0; x < 20; x++) {
-            for (int y = 0; y < 15; y++) {
+        for (int x = 0; x < 40; x++) {
+            for (int y = 0; y < 21; y++) {
                 int dd = (y + x % 2 * 2 + x / 3) - time;
                 if (dd < 0 && dd > -30) {
                     if (dir > 0) {
