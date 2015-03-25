@@ -24,32 +24,31 @@ public class GrassTile extends Tile {
         int col = Color.get(level.grassColor, level.grassColor, level.grassColor + 111, level.grassColor + 111);
         int transitionColor = Color.get(level.grassColor - 111, level.grassColor, level.grassColor + 111, level.dirtColor);
 
-        boolean u = !level.getTile(x, y - 1).connectsToGrass;
-        boolean d = !level.getTile(x, y + 1).connectsToGrass;
-        boolean l = !level.getTile(x - 1, y).connectsToGrass;
-        boolean r = !level.getTile(x + 1, y).connectsToGrass;
+        boolean connectsUp = !level.getTile(x, y - 1).connectsToGrass;
+        boolean connectsDown = !level.getTile(x, y + 1).connectsToGrass;
+        boolean connectsLeft = !level.getTile(x - 1, y).connectsToGrass;
+        boolean ConnectsRight = !level.getTile(x + 1, y).connectsToGrass;
 
-        if (!u && !l) {
+        // Draw 4 corners of the tile.
+        if (!connectsUp && !connectsLeft) {
             screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
         } else {
-            screen.render(x * 16 + 0, y * 16 + 0, (l ? 11 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
+            screen.render(x * 16 + 0, y * 16 + 0, (connectsLeft ? 11 : 12) + (connectsUp ? 0 : 1) * 32, transitionColor, 0);
         }
-
-        if (!u && !r) {
+        if (!connectsUp && !ConnectsRight) {
             screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
         } else {
-            screen.render(x * 16 + 8, y * 16 + 0, (r ? 13 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
+            screen.render(x * 16 + 8, y * 16 + 0, (ConnectsRight ? 13 : 12) + (connectsUp ? 0 : 1) * 32, transitionColor, 0);
         }
-
-        if (!d && !l) {
+        if (!connectsDown && !connectsLeft) {
             screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
         } else {
-            screen.render(x * 16 + 0, y * 16 + 8, (l ? 11 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
+            screen.render(x * 16 + 0, y * 16 + 8, (connectsLeft ? 11 : 12) + (connectsDown ? 2 : 1) * 32, transitionColor, 0);
         }
-        if (!d && !r) {
+        if (!connectsDown && !ConnectsRight) {
             screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
         } else {
-            screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
+            screen.render(x * 16 + 8, y * 16 + 8, (ConnectsRight ? 13 : 12) + (connectsDown ? 2 : 1) * 32, transitionColor, 0);
         }
     }
 

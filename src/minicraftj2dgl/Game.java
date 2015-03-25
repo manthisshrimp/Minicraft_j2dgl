@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import minicraftj2dgl.entity.mob.Player;
 import minicraftj2dgl.gfx.Color;
 import minicraftj2dgl.gfx.Font;
@@ -31,6 +32,7 @@ public class Game extends Core {
     // Core
     public Player player;
     public Menu menu;
+
     private Level[] levels = new Level[5];
     private int currentLevel = 3;
     private Level level = levels[currentLevel];
@@ -51,11 +53,12 @@ public class Game extends Core {
 
     // Variables & Flags
     private int tickCount = 0;
-    public int gameTime = 0;
     private int wonTimer = 0;
-    public boolean hasWon = false;
     private int playerDeadTime = 0;
     private int pendingLevelChange;
+
+    public int gameTime = 0;
+    public boolean hasWon = false;
     public boolean loaded = false;
 
     public static void main(String[] args) {
@@ -88,7 +91,13 @@ public class Game extends Core {
         try {
             screen = new Screen(VIEW_WIDTH, VIEW_HEIGTH, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("res/icons.png"))));
             lightScreen = new Screen(VIEW_WIDTH, VIEW_HEIGTH, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("res/icons.png"))));
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            // TODO: better error handling
+            JOptionPane.showMessageDialog(null,
+                    "Error loading game textures, the game will now close.",
+                    "Error Loading Textures",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
 
         frame.addKeyListener(input);
@@ -97,10 +106,10 @@ public class Game extends Core {
         // Make save folder if it doesn't exist.
         new File("./saves").mkdir();
 
-        // TODO: remove resetGame(); and fix conditional rendering.
         menu = new TitleMenu(this, input);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="public GameState getGameState()">
     public GameState getGameState() {
         GameState gameState = new GameState();
         gameState.playerDeadTime = playerDeadTime;
@@ -113,7 +122,9 @@ public class Game extends Core {
         gameState.player = player;
         return gameState;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="public void setGameState(GameState gameState)">
     public void setGameState(GameState gameState) {
         playerDeadTime = gameState.playerDeadTime;
         wonTimer = gameState.wonTimer;
@@ -128,11 +139,13 @@ public class Game extends Core {
         player.input = input;
         loaded = true;
     }
-    
+    //</editor-fold>
+
     @Override
     protected void update() {
         tickCount++;
         if (!frame.isFocusOwner()) {
+            // Game pauses if frame is not in focus.
             input.releaseAll();
         } else {
             if (loaded && !player.removed && !hasWon) {
@@ -149,6 +162,7 @@ public class Game extends Core {
                     }
                 }
             } else {
+                // Game pauses if in menu.
                 if (player.removed) {
                     playerDeadTime++;
                     if (playerDeadTime > 60) {
@@ -196,8 +210,10 @@ public class Game extends Core {
     @Override
     protected void draw(Graphics2D g2) {
         if (loaded) {
+            // Determine current viewport.
             int xScroll = player.x - screen.w / 2;
-            int yScroll = player.y - (screen.h - 8) / 2;
+            int yScroll = player.y - (screen.h - 16) / 2;
+            // Prevent viewport from exiting level bounds.
             if (xScroll < 16) {
                 xScroll = 16;
             }
@@ -210,6 +226,7 @@ public class Game extends Core {
             if (yScroll > level.height * 16 - screen.h - 16) {
                 yScroll = level.height * 16 - screen.h - 16;
             }
+            // ???
             if (currentLevel > 3) {
                 int col = Color.get(20, 20, 121, 121);
                 for (int y = 0; y < 14; y++) {
@@ -218,22 +235,23 @@ public class Game extends Core {
                     }
                 }
             }
-
+            // Render background and sprites.
             level.renderBackground(screen, xScroll, yScroll);
             level.renderSprites(screen, xScroll, yScroll);
-
+            // ???
             if (currentLevel < 3) {
                 lightScreen.clear(0);
                 level.renderLight(lightScreen, xScroll, yScroll);
                 screen.overlay(lightScreen, xScroll, yScroll);
             }
         }
-
+        // Render GUI
         renderGui();
-
+        // Render Focus Nagger
         if (!frame.isFocusOwner()) {
             renderFocusNagger();
         }
+        // Make the render image's pixels equal to the screen's pixels.
         for (int y = 0; y < screen.h; y++) {
             for (int x = 0; x < screen.w; x++) {
                 int cc = screen.pixels[x + y * screen.w];
@@ -242,17 +260,19 @@ public class Game extends Core {
                 }
             }
         }
-
+        // Draw the render image.
         g2.fillRect(0, 0, resolution.width, resolution.height);
         g2.drawImage(image, 0, 0, 640, 360, null);
     }
 
     private void renderGui() {
+        // Bottom black bar
         for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < 20; x++) {
+            for (int x = 0; x < 40; x++) {
                 screen.render(x * 8, screen.h - 16 + y * 8, 0 + 12 * 32, Color.get(000, 000, 000, 000), 0);
             }
         }
+        // Player stats
         if (loaded) {
             for (int i = 0; i < 10; i++) {
                 if (i < player.health) {
@@ -278,6 +298,7 @@ public class Game extends Core {
                 player.activeItem.renderInventory(screen, 10 * 8, screen.h - 16);
             }
         }
+        // Menu
         if (menu != null) {
             menu.render(screen);
         }
@@ -303,7 +324,7 @@ public class Game extends Core {
             screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, Color.get(-1, 1, 5, 445), 1);
         }
 
-        // Add blink effect
+        // Blink effect
         if ((tickCount / 20) % 2 == 0) {
             Font.draw(msg, screen, xx, yy, Color.get(5, 333, 333, 333));
         } else {
