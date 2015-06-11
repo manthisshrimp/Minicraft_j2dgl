@@ -208,7 +208,7 @@ public class Game extends Core {
     }
 
     @Override
-    protected void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, int xOffset, int yOffset) {
         if (loaded) {
             // Determine current viewport.
             int xScroll = player.x - screen.w / 2;
@@ -261,7 +261,7 @@ public class Game extends Core {
             }
         }
         // Draw the render image.
-        g2.fillRect(0, 0, resolution.width, resolution.height);
+        g2.fillRect(0, 0, contentResolution.width, contentResolution.height);
         g2.drawImage(image, 0, 0, 640, 360, null);
     }
 
@@ -276,26 +276,27 @@ public class Game extends Core {
         if (loaded) {
             for (int i = 0; i < 10; i++) {
                 if (i < player.health) {
-                    screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(000, 200, 500, 533), 0);
+                    screen.render(i * 8 + 8, screen.h - 14, 0 + 12 * 32, Color.get(000, 200, 500, 533), 0);
                 } else {
-                    screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(000, 100, 000, 000), 0);
+                    screen.render(i * 8 + 8, screen.h - 14, 0 + 12 * 32, Color.get(000, 200, 000, 000), 0);
                 }
                 if (player.staminaRechargeDelay > 0) {
                     if (player.staminaRechargeDelay / 4 % 2 == 0) {
-                        screen.render(screen.w - i * 8, screen.h - 16, 1 + 12 * 32, Color.get(000, 555, 000, 000), 0);
+                        screen.render(screen.w - i * 8 - 16, screen.h - 14, 1 + 12 * 32, Color.get(000, 555, 000, 000), 0);
                     } else {
-                        screen.render(screen.w - i * 8, screen.h - 16, 1 + 12 * 32, Color.get(000, 110, 000, 000), 0);
+                        screen.render(screen.w - i * 8 - 16, screen.h - 14, 1 + 12 * 32, Color.get(000, 110, 000, 000), 0);
                     }
                 } else {
                     if (i < player.stamina) {
-                        screen.render(screen.w - i * 8, screen.h - 16, 1 + 12 * 32, Color.get(000, 220, 550, 553), 0);
+                        screen.render(screen.w - i * 8 - 16, screen.h - 14, 1 + 12 * 32, Color.get(000, 220, 550, 553), 0);
                     } else {
-                        screen.render(screen.w - i * 8, screen.h - 16, 1 + 12 * 32, Color.get(000, 110, 000, 000), 0);
+                        screen.render(screen.w - i * 8 - 16, screen.h - 14, 1 + 12 * 32, Color.get(000, 110, 000, 000), 0);
                     }
                 }
             }
             if (player.activeItem != null) {
-                player.activeItem.renderInventory(screen, 10 * 8, screen.h - 16);
+                int nameWidth = (player.activeItem.getName().length() + 1) * 8;
+                player.activeItem.renderInventory(screen, (screen.w / 2) - (nameWidth / 2), screen.h - 12);
             }
         }
         // Menu
@@ -333,22 +334,7 @@ public class Game extends Core {
     }
 
     @Override
-    protected void keyTyped(KeyEvent keyEvent) {
-
-    }
-
-    @Override
     protected void beforeClose() {
-
-    }
-
-    @Override
-    protected void keysPressed(ArrayList<Integer> keyQueue) {
-
-    }
-
-    @Override
-    protected void processMouse(MouseEvent mouseEvent) {
 
     }
 

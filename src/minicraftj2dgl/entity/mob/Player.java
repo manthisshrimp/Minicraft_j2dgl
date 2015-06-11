@@ -17,6 +17,7 @@ import minicraftj2dgl.item.FurnitureItem;
 import minicraftj2dgl.item.Item;
 import minicraftj2dgl.item.PowerGloveItem;
 import minicraftj2dgl.level.Level;
+import minicraftj2dgl.level.tile.GrassTile;
 import minicraftj2dgl.level.tile.Tile;
 import minicraftj2dgl.screen.InventoryMenu;
 import minicraftj2dgl.screen.TitleMenu;
@@ -437,7 +438,7 @@ public class Player extends Mob {
         while (true) {
             int xWhatIsThis = random.nextInt(level.width);
             int yWhatIsThis = random.nextInt(level.height);
-            if (level.getTile(xWhatIsThis, yWhatIsThis) == Tile.grass) {
+            if (level.getTile(xWhatIsThis, yWhatIsThis) instanceof GrassTile) {
                 this.x = xWhatIsThis * 16 + 8;
                 this.y = yWhatIsThis * 16 + 8;
                 return true;

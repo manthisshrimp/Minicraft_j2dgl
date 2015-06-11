@@ -17,7 +17,7 @@ public class GrassTile extends Tile {
     public GrassTile(int id) {
         super(id);
         connectsToGrass = true;
-    }
+        }
 
     @Override
     public void render(Screen screen, Level level, int x, int y) {
